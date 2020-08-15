@@ -6,7 +6,7 @@ import (
 	"log"
 	"time"
 
-	pb "github.com/Meshbits/shurli/shurli_grpc/shurlipb"
+	pb "github.com/Meshbits/shurli-server/shurli_grpc/shurlipb"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
