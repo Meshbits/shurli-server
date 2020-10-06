@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/Meshbits/shurli/sagoutil"
+	"github.com/Meshbits/shurli-server/sagoutil"
 )
 
 func main() {

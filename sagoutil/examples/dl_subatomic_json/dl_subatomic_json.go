@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"github.com/Meshbits/shurli/sagoutil"
+	"github.com/Meshbits/shurli-server/sagoutil"
 )
 
 func main() {

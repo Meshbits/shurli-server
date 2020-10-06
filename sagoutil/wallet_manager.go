@@ -13,7 +13,6 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"github.com/Meshbits/shurli-server/sagoutil"
 	"github.com/satindergrewal/kmdgo"
 	"github.com/satindergrewal/kmdgo/kmdutil"
 )
@@ -25,7 +24,7 @@ func StartWallet(chain string, cmdParams []string) error {
 
 	// fmt.Println(chain)
 
-	// fmt.Println(sagoutil.ShurliRootDir())
+	// fmt.Println(ShurliRootDir())
 
 	// Check if provided blockchain is already running on system.
 	// If chain's pid (ie. "komodo.pid") is present in that chain's data directory, it means
@@ -41,9 +40,9 @@ func StartWallet(chain string, cmdParams []string) error {
 	}
 
 	// If provided blockchain isn't found running already, start it.
-	cmd := exec.Command(sagoutil.ShurliRootDir()+"/assets/komodo-qt", cmdParams...)
+	cmd := exec.Command(ShurliRootDir()+"/assets/komodo-qt", cmdParams...)
 	if runtime.GOOS == "windows" {
-		cmd = exec.Command(sagoutil.ShurliRootDir()+"/assets/komodo-qt.exe", cmdParams...)
+		cmd = exec.Command(ShurliRootDir()+"/assets/komodo-qt.exe", cmdParams...)
 	}
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
@@ -60,7 +59,7 @@ func StartWallet(chain string, cmdParams []string) error {
 // BackupConfigJSON take backup of existing config.json file and store it with filename + timestamp
 func BackupConfigJSON(confPath string) {
 	// Get current time in unixtime format
-	currentUnixTimestamp := sagoutil.IntToString(int32(time.Now().Unix()))
+	currentUnixTimestamp := IntToString(int32(time.Now().Unix()))
 	// fmt.Println(currentUnixTimestamp)
 
 	// create directory if it does't alredy exists
@@ -92,7 +91,7 @@ func BackupConfigJSON(confPath string) {
 // BackupWalletJSON take backup of existing wallet.json file and store it with filename + timestamp
 func BackupWalletJSON(confPath string) {
 	// Get current time in unixtime format
-	currentUnixTimestamp := sagoutil.IntToString(int32(time.Now().Unix()))
+	currentUnixTimestamp := IntToString(int32(time.Now().Unix()))
 	// fmt.Println(currentUnixTimestamp)
 
 	// create directory if it does't alredy exists
@@ -183,7 +182,7 @@ func GenerateDEXP2PAccount() error {
 	err = json.Unmarshal(confJSONContent, &conf)
 
 	// Generate new contents for config.json file and store newly generated address info to it
-	var newConf sagoutil.SubAtomicConfig
+	var newConf SubAtomicConfig
 	newConf.SubatomicExe = conf.SubatomicExe
 	newConf.SubatomicDir = conf.SubatomicDir
 	newConf.DexNSPV = conf.DexNSPV
@@ -209,7 +208,7 @@ func GenerateDEXP2PAccount() error {
 		fmt.Println("config.json file does not exists. Creating a new one")
 	} else {
 		fmt.Println("config.json file already exists. Taking backup of it to backups/ directory")
-		backupDir := sagoutil.ShurliRootDir()
+		backupDir := ShurliRootDir()
 		BackupConfigJSON(backupDir)
 	}
 
@@ -232,7 +231,7 @@ func GenerateDEXP2PWallet() (kmdutil.IguanaWallet, error) {
 		fmt.Println("wallet.json file does not exists. Creating a new one")
 	} else {
 		fmt.Println("wallet.json file already exists. Taking backup of it to backups/wallets/ directory")
-		backupDir := sagoutil.ShurliRootDir()
+		backupDir := ShurliRootDir()
 		BackupWalletJSON(backupDir)
 	}
 
@@ -277,7 +276,7 @@ func GenerateDEXP2PWallet() (kmdutil.IguanaWallet, error) {
 	err = json.Unmarshal(confJSONContent, &conf)
 
 	// Generate new contents for config.json file and store newly generated address info to it
-	var newConf sagoutil.SubAtomicConfig
+	var newConf SubAtomicConfig
 	newConf.SubatomicExe = conf.SubatomicExe
 	newConf.SubatomicDir = conf.SubatomicDir
 	newConf.DexNSPV = conf.DexNSPV
@@ -304,7 +303,7 @@ func GenerateDEXP2PWallet() (kmdutil.IguanaWallet, error) {
 		fmt.Println("config.json file does not exists. Creating a new one")
 	} else {
 		fmt.Println("config.json file already exists. Taking backup of it to backups/ directory")
-		backupDir := sagoutil.ShurliRootDir()
+		backupDir := ShurliRootDir()
 		BackupConfigJSON(backupDir)
 	}
 

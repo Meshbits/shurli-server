@@ -5,7 +5,7 @@ import (
 
 	"github.com/satindergrewal/kmdgo"
 
-	"github.com/Meshbits/shurli/sagoutil"
+	"github.com/Meshbits/shurli-server/sagoutil"
 )
 
 func main() {
