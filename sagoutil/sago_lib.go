@@ -39,7 +39,7 @@ type WInfo struct {
 	Status     string
 	Balance    float64
 	ZBalance   float64
-	Blocks     int32
+	Blocks     int
 	Synced     bool
 	Shielded   bool
 	TValidAddr bool
@@ -51,13 +51,15 @@ func WalletInfo(chains []kmdgo.AppType) []WInfo {
 	var wallets []WInfo
 
 	// fmt.Println(chains)
+	// use config.json transaparent and shieleded address for all chains to check if these are imported/ismine or not
+	var conf SubAtomicConfig = SubAtomicConfInfo()
 
-	stats, err := kmdgo.NewAppType(kmdgo.AppType(DexP2pChain)).DEXStats()
-	if err != nil {
-		Log.Printf("Code: %v\n", stats.Error.Code)
-		Log.Printf("Message: %v\n\n", stats.Error.Message)
-		// log.Fatalln("Err happened", err)
-	}
+	// stats, err := kmdgo.NewAppType(kmdgo.AppType(DexP2pChain)).DEXStats()
+	// if err != nil {
+	// 	Log.Printf("Code: %v\n", stats.Error.Code)
+	// 	Log.Printf("Message: %v\n\n", stats.Error.Message)
+	// 	// log.Fatalln("Err happened", err)
+	// }
 
 	// fmt.Println("stats value", stats)
 	// fmt.Println("Recvaddr", stats.Result.Recvaddr)
@@ -126,7 +128,7 @@ func WalletInfo(chains []kmdgo.AppType) []WInfo {
 
 				// Validate Transaparent Address
 				var vldadr kmdgo.ValidateAddress
-				taddress := stats.Result.Recvaddr
+				taddress := conf.DexRecvTAddr
 				vldadr, err = appName.ValidateAddress(taddress)
 				if err != nil {
 					Log.Printf("Code: %v\n", vldadr.Error.Code)
@@ -152,13 +154,13 @@ func WalletInfo(chains []kmdgo.AppType) []WInfo {
 					var zblc kmdgo.ZGetBalance
 
 					args := make(kmdgo.APIParams, 2)
-					args[0] = stats.Result.RecvZaddr
+					args[0] = conf.DexRecvZAddr
 					//args[1] = 1
 					// fmt.Println(args)
 
 					// Validate if Shielded adddress is = ismine
 					var zvldadr kmdgo.ZValidateAddress
-					zaddress := stats.Result.RecvZaddr
+					zaddress := conf.DexRecvZAddr
 					zvldadr, err := appName.ZValidateAddress(zaddress)
 					if err != nil {
 						Log.Printf("Code: %v\n", zvldadr.Error.Code)
@@ -185,7 +187,7 @@ func WalletInfo(chains []kmdgo.AppType) []WInfo {
 						Status:     "Online",
 						ZBalance:   zblc.Result,
 						Balance:    info.Result.Balance,
-						Blocks:     int32(info.Result.Blocks),
+						Blocks:     info.Result.Blocks,
 						Synced:     tempSyncStatus,
 						Shielded:   coinConfInfo.Shielded,
 						TValidAddr: vldadr.Result.Ismine,
@@ -199,7 +201,7 @@ func WalletInfo(chains []kmdgo.AppType) []WInfo {
 						Icon:       strings.ToLower(coinConfInfo.Ticker),
 						Status:     "Online",
 						Balance:    info.Result.Balance,
-						Blocks:     int32(info.Result.Blocks),
+						Blocks:     info.Result.Blocks,
 						Synced:     tempSyncStatus,
 						Shielded:   coinConfInfo.Shielded,
 						TValidAddr: vldadr.Result.Ismine,
@@ -303,10 +305,8 @@ func DLSubJSONData() error {
 	if res.Status == "200 OK" {
 		ioutil.WriteFile("assets/subatomic.json", subJSONData, 0644)
 		return nil
-	} else {
-		// fmt.Println(res.Status)
-		return errors.New(res.Status)
 	}
+	return errors.New(res.Status)
 }
 
 // MatchedAuthorized checks the pubkey against the subatomic.json file's authorized pubkey list.
@@ -369,6 +369,7 @@ type OrderData struct {
 	RelIcon      string  `json:"relicon"`
 }
 
+// IsLower returns true if supplied string is lower case, false if upper case
 func IsLower(s string) bool {
 	for _, r := range s {
 		if !unicode.IsLower(r) && unicode.IsLetter(r) {

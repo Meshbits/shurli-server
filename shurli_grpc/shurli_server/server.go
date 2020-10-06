@@ -28,6 +28,7 @@ func (*server) WalletInfo(ctx context.Context, req *pb.WalletInfoRequest) (*pb.W
 
 	var wallets []sagoutil.WInfo
 	wallets = sagoutil.WalletInfo(chains)
+	// fmt.Println(wallets)
 
 	// pwallets := dataToShurliPbWalletInfo(wallets)
 
@@ -44,7 +45,7 @@ func (*server) WalletInfo(ctx context.Context, req *pb.WalletInfoRequest) (*pb.W
 
 func dataToShurliPbWalletInfo(data []sagoutil.WInfo) []*pb.WalletInfo {
 
-	fmt.Println(len(data))
+	// fmt.Println(len(data))
 
 	var pwallets []*pb.WalletInfo
 
@@ -61,7 +62,7 @@ func dataToShurliPbWalletInfo(data []sagoutil.WInfo) []*pb.WalletInfo {
 			Status:     data[i].Status,
 			Balance:    data[i].Balance,
 			ZBalance:   data[i].ZBalance,
-			Blocks:     data[i].Blocks,
+			Blocks:     int32(data[i].Blocks),
 			Synced:     data[i].Synced,
 			Shielded:   data[i].Shielded,
 			TValidAddr: data[i].TValidAddr,
