@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"os"
 	"strings"
 
 	"github.com/Meshbits/shurli-server/sagoutil"
@@ -14,6 +15,8 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+
+	"google.golang.org/grpc/reflection"
 )
 
 type server struct {
@@ -186,6 +189,20 @@ func dataToShurliPbOrderData(data []sagoutil.OrderData) []*pb.OrderData {
 	return porderlist
 }
 
+func init() {
+	// Check if config.json already exists.
+	// If doesn't, then create a new one
+	_, err := os.Stat("config.json")
+	if os.IsNotExist(err) {
+		// fmt.Println("config.json file does not exists. Creating a new one")
+		_, err := sagoutil.GenerateDEXP2PWallet()
+		if err != nil {
+			fmt.Printf("%s", err)
+		}
+		// sagoutil.ImportTAddrPrivKey(DexP2pChain)
+	}
+}
+
 func main() {
 	fmt.Println("Hello Shurli gRPC!")
 
@@ -197,6 +214,9 @@ func main() {
 	opts := []grpc.ServerOption{}
 	s := grpc.NewServer(opts...)
 	pb.RegisterShurliServiceServer(s, &server{})
+
+	// Register reflection service on gRPC server.
+	reflection.Register(s)
 
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("Failed to serve: %v", err)
